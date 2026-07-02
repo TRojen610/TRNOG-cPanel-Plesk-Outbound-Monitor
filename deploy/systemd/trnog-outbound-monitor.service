@@ -1,0 +1,17 @@
+[Unit]
+Description=TRNOG Outbound Monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/trnog-outbound-monitor
+Environment=PYTHONUNBUFFERED=1
+Environment=TRNOG_OUTBOUND_MONITOR_CONFIG=/etc/trnog-outbound-monitor/config.yaml
+ExecStart=/opt/trnog-outbound-monitor/.venv/bin/python -m service.app --config /etc/trnog-outbound-monitor/config.yaml
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

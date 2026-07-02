@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="{{ base_path }}">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="static/app.css">
+</head>
+<body data-embed="{{ 'true' if embed else 'false' }}">
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">TRNOG Security Monitor</p>
+        <h1>Outbound Activity Dashboard</h1>
+        <p class="subtitle">
+          Live outbound connection visibility for hosting servers, backed by the upstream eBPF collector.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <span class="status-badge" id="collector-status">Checking collector</span>
+        <span class="status-badge status-muted" id="refresh-status">Initializing</span>
+      </div>
+    </header>
+
+    <section class="card-grid summary-grid">
+      <article class="summary-card">
+        <span>Total Events</span>
+        <strong id="summary-total">0</strong>
+      </article>
+      <article class="summary-card">
+        <span>Unique Users</span>
+        <strong id="summary-users">0</strong>
+      </article>
+      <article class="summary-card">
+        <span>Destinations</span>
+        <strong id="summary-destinations">0</strong>
+      </article>
+      <article class="summary-card">
+        <span>Ports</span>
+        <strong id="summary-ports">0</strong>
+      </article>
+    </section>
+
+    <section class="panel filter-panel">
+      <div class="panel-head">
+        <div>
+          <p class="panel-kicker">Filters</p>
+          <h2>Scope the live stream</h2>
+        </div>
+        <button id="refresh-button" class="ghost-button" type="button">Refresh Now</button>
+      </div>
+
+      <form id="filters-form" class="filter-grid">
+        <label>
+          <span>Time Range</span>
+          <select name="window_seconds">
+            <option value="300">Last 5 minutes</option>
+            <option value="900">Last 15 minutes</option>
+            <option value="3600" selected>Last 1 hour</option>
+            <option value="21600">Last 6 hours</option>
+            <option value="86400">Last 24 hours</option>
+          </select>
+        </label>
+        <label>
+          <span>Username</span>
+          <input name="user" type="text" placeholder="all users">
+        </label>
+        <label>
+          <span>Destination IP</span>
+          <input name="dst_ip" type="text" placeholder="0.0.0.0">
+        </label>
+        <label>
+          <span>Port</span>
+          <input name="port" type="number" min="1" max="65535" placeholder="443">
+        </label>
+        <label>
+          <span>Protocol</span>
+          <select name="family">
+            <option value="">Any</option>
+            <option value="ipv4">IPv4</option>
+            <option value="ipv6">IPv6</option>
+          </select>
+        </label>
+        <label class="search-field">
+          <span>Search</span>
+          <input name="search" type="search" placeholder="process, host, IP, cmdline">
+        </label>
+      </form>
+    </section>
+
+    <section class="card-grid top-grid">
+      <article class="panel top-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Top Destinations</p>
+            <h2>Most active targets</h2>
+          </div>
+        </div>
+        <div id="top-destinations" class="list-state">Waiting for data</div>
+      </article>
+
+      <article class="panel top-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Top Users</p>
+            <h2>Accounts driving outbound traffic</h2>
+          </div>
+        </div>
+        <div id="top-users" class="list-state">Waiting for data</div>
+      </article>
+
+      <article class="panel top-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker">Top Ports</p>
+            <h2>Outbound service mix</h2>
+          </div>
+        </div>
+        <div id="top-ports" class="list-state">Waiting for data</div>
+      </article>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-head">
+        <div>
+          <p class="panel-kicker">Live Events</p>
+          <h2>Recent outbound connections</h2>
+        </div>
+        <p class="table-caption" id="table-caption">Loading recent activity</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Process</th>
+              <th>Source</th>
+              <th>Destination</th>
+              <th>Protocol</th>
+              <th>Host Hint</th>
+            </tr>
+          </thead>
+          <tbody id="events-body">
+            <tr>
+              <td colspan="7" class="table-empty">Waiting for live events</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    window.TRNOG_APP = {
+      embed: {{ 'true' if embed else 'false' }},
+      defaultWindowSeconds: {{ default_window_seconds }},
+      fallbackPollSeconds: {{ fallback_poll_seconds }}
+    };
+  </script>
+  <script src="static/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+http:
+  host: 127.0.0.1
+  port: 15155
+  localhost_only: true
+
+collector:
+  mode: embedded
+  log_source_path: /var/log/outbound-logger/current.jsonl
+  log_format: json
+  poll_interval_seconds: 1.0
+  ignore_loopback: true
+  ignore_private: false
+  ignore_root: false
+  enable_host_enrichment: true
+
+storage:
+  max_events: 20000
+  data_dir: /var/lib/trnog-outbound-monitor
+
+export:
+  mode: file
+  format: json
+  directory: /var/log/trnog-outbound-monitor
+  syslog_target: ""
+  syslog_port: 514
+  syslog_protocol: udp
+
+ui:
+  default_window_seconds: 3600
+  fallback_poll_seconds: 5
+  events_limit: 200
